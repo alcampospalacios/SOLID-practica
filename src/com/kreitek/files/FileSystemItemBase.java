@@ -1,6 +1,7 @@
 package com.kreitek.files;
 
-import java.util.List;
+import com.kreitek.files.file_system.Container;
+import com.kreitek.files.file_system.FileSystemItem;
 
 public abstract class FileSystemItemBase implements FileSystemItem {
     protected static final String PATH_SEPARATOR = "/";
@@ -31,14 +32,18 @@ public abstract class FileSystemItemBase implements FileSystemItem {
     }
 
     @Override
-    public void setParent(FileSystemItem directory) {
-        if (directory != null && !(directory instanceof Directory)) {
-            throw new IllegalArgumentException("El padre solo puede ser un directorio");
+    public void setParent(FileSystemItem parent) {
+        if (parent != null && !(parent instanceof Container)) {
+            throw new IllegalArgumentException("El padre solo puede ser un contenedor");
         }
-        if (this.parent != directory) {
-            if (this.parent != null) this.parent.removeFile(this);
-            this.parent = directory;
-            if (directory != null) directory.addFile(this);
+        if (this.parent != parent) {
+            if (this.parent != null && this.parent instanceof Container) {
+                ((Container) this.parent).removeFile(this);
+            }
+            this.parent = parent;
+            if (parent != null && parent instanceof Container) {
+                ((Container) parent).addFile(this);
+            }
         }
     }
 
@@ -52,27 +57,4 @@ public abstract class FileSystemItemBase implements FileSystemItem {
         path = path + getName();
         return path;
     }
-
-    @Override
-    public abstract String getExtension();
-
-    @Override
-    public abstract List<FileSystemItem> listFiles();
-
-    @Override
-    public abstract int getSize();
-
-    @Override
-    public abstract void open();
-
-    @Override
-    public abstract void setPosition(int numberOfBytesFromBeginning);
-
-    @Override
-    public abstract byte[] read(int numberOfBytesToRead);
-
-    @Override
-    public abstract void write(byte[] buffer);
-
-    public abstract void close();
 }

@@ -1,7 +1,7 @@
 package com.kreitek.utils;
 
-import com.kreitek.files.Directory;
-import com.kreitek.files.FileSystemItem;
+import com.kreitek.files.file_system.Container;
+import com.kreitek.files.file_system.FileSystemItem;
 import com.kreitek.service.FileManager;
 
 public class FileSystemPrinter {
@@ -17,8 +17,8 @@ public class FileSystemPrinter {
         String message = String.format("%s%s = %d bytes", indentation, item.getFullPath(), FileManager.calculateSize(item));
         System.out.println(message);
 
-        if (item instanceof Directory) {
-            for (FileSystemItem subitem: item.listFiles()) {
+        if (item instanceof Container) {
+            for (FileSystemItem subitem: ((Container) item).listFiles()) {
                 FileSystemPrinter.print(subitem, nivel + 1);
             }
         }
